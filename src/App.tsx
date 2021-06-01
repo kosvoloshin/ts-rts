@@ -1,26 +1,38 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from 'react';
+import { Employes, CreateEmployes } from './Components';
+import { IStateForm } from "./Components/CreateEmployes";
+import "./style.css";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const App = () => {
+    const [state, setState] = useState([]);
+
+    const getEmployes = async () => {
+        await fetch('/api/82731997a4b24029814d6bce8bd28e58/unicorns').then((response) => {
+            response.json().then((data) => {setState(data)});
+        });
+    };
+
+    useEffect(() => {
+        getEmployes();
+    }, []);
+
+    const submit = async (data: IStateForm) => {
+        await fetch('/api/82731997a4b24029814d6bce8bd28e58/unicorns', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+
+        getEmployes();
+    };
+
+    return (
+        <>
+            <Employes data={state} />
+            <hr />
+            <CreateEmployes submit={submit} />
+        </>
+    );
 }
 
 export default App;
